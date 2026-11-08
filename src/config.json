@@ -1,0 +1,299 @@
+{
+  "islandScale": 0.8,
+  "antigravityDetail": "specific",
+  "antigravityTrace": true,
+  "antigravityQuietSeconds": 8,
+  "antigravitySuppressSeconds": 10,
+  "antigravityTemplates": {
+    "working": "Working: {task}",
+    "finished": "Done: {task}",
+    "needs_input": "Needs approval: {what}",
+    "stopped": "Stopped: {task}"
+  },
+  "showSiteInText": {
+    "web": false,
+    "desktop": true,
+    "ide": false
+  },
+  "taskKindTemplates": {
+    "image": {
+      "finished": "Picture is ready",
+      "stopped": "Picture generation stopped",
+      "limit_reached": "Picture limit reached",
+      "needs_input": "Permission needed for picture"
+    },
+    "pdf": {
+      "finished": "PDF is ready",
+      "stopped": "PDF generation stopped",
+      "limit_reached": "PDF limit reached",
+      "needs_input": "Permission needed for PDF"
+    },
+    "document": {
+      "finished": "Document is ready",
+      "stopped": "Document generation stopped",
+      "limit_reached": "Document limit reached",
+      "needs_input": "Permission needed for document"
+    },
+    "spreadsheet": {
+      "finished": "Spreadsheet is ready",
+      "stopped": "Spreadsheet generation stopped",
+      "limit_reached": "Spreadsheet limit reached",
+      "needs_input": "Permission needed for spreadsheet"
+    },
+    "slides": {
+      "finished": "Presentation is ready",
+      "stopped": "Presentation generation stopped",
+      "limit_reached": "Presentation limit reached",
+      "needs_input": "Permission needed for presentation"
+    },
+    "code": {
+      "finished": "Code is ready",
+      "stopped": "Code generation stopped",
+      "limit_reached": "Code limit reached",
+      "needs_input": "Permission needed for code"
+    },
+    "research": {
+      "finished": "Research is ready",
+      "stopped": "Research stopped",
+      "limit_reached": "Research limit reached",
+      "needs_input": "Permission needed for research"
+    },
+    "translation": {
+      "finished": "Translation is ready",
+      "stopped": "Translation stopped",
+      "limit_reached": "Translation limit reached",
+      "needs_input": "Permission needed for translation"
+    },
+    "summary": {
+      "finished": "Summary is ready",
+      "stopped": "Summary stopped",
+      "limit_reached": "Summary limit reached",
+      "needs_input": "Permission needed for summary"
+    },
+    "rewrite": {
+      "finished": "Rewrite is ready",
+      "stopped": "Rewrite stopped",
+      "limit_reached": "Rewrite limit reached",
+      "needs_input": "Permission needed for rewrite"
+    },
+    "question": {
+      "finished": "Answer is ready: see the answer to your question",
+      "stopped": "Answer was stopped",
+      "limit_reached": "Usage limit reached",
+      "needs_input": "Permission or input required"
+    }
+  },
+  "classificationRules": {
+    "priorityOrder": [
+      "image",
+      "pdf",
+      "spreadsheet",
+      "slides",
+      "document",
+      "code",
+      "translation",
+      "summary",
+      "rewrite",
+      "research",
+      "question"
+    ],
+    "keywords": {
+      "image": ["picture", "image", "photo", "draw", "drawing", "logo", "illustration", "sketch", "portrait", "wallpaper", "diagram", "graphic", "artwork", "dall-e", "midjourney", "imagen", "banner", "thumbnail", "ছবি", "ইমেজ", "আঁকো", "চিত্র", "ড্রয়িং", "লোগো"],
+      "pdf": ["pdf", ".pdf", "export to pdf", "save as pdf", "make a pdf", "download as pdf", "convert to pdf", "পিডিএফ"],
+      "spreadsheet": ["excel", "spreadsheet", "csv", "xlsx", ".csv", ".xlsx", "sheet", "dataframe", "table data", "এক্সেল", "স্প্রেডশিট"],
+      "slides": ["slides", "presentation", "powerpoint", "ppt", "pptx", ".ppt", ".pptx", "pitch deck", "slide deck", "ডেক", "প্রেজেন্টেশন", "স্লাইড"],
+      "document": ["word", "docx", ".docx", "doc", "report", "essay", "article", "write a doc", "document", "ডকুমেন্ট", "প্রতিবেদন", "রিপোর্ট", "প্রবন্ধ"],
+      "code": ["code", "script", "function", "bug", "fix", "debug", "algorithm", "component", "class", "endpoint", "api", "query", "sql", "program", "python", "javascript", "typescript", "rust", "html", "css", "কোড", "স্ক্রিপ্ট", "ফাংশন", "বাগ", "ফিক্স"],
+      "research": ["research", "search", "find sources", "citations", "literature review", "investigate", "deep dive", "গবেষণা", "অনুসন্ধান", "উৎস"],
+      "translation": ["translate", "translation", "english to", "bengali to", "spanish to", "in french", "in german", "অনুবাদ", "বাংলায় অনুবাদ", "ট্রান্সলেট"],
+      "summary": ["summarize", "summary", "tldr", "tl;dr", "brief", "digest", "recap", "key takeaways", "সারসংক্ষেপ", "সংক্ষেপ", "সারাংশ"],
+      "rewrite": ["rewrite", "rephrase", "paraphrase", "reword", "polish this", "improve writing", "পুনরায় লিখুন", "রিরাইট", "প্যারাফ্রেজ"]
+    },
+    "structureSelectors": {
+      "claude": {
+        "image": "img:not([alt*='avatar']):not([class*='avatar']):not([src*='avatar']):not([width='16']):not([width='20']):not([width='24'])",
+        "code": "pre code, div.font-mono pre",
+        "fileChip": "a[href*='.pdf'], a[href*='.docx'], a[href*='.xlsx'], a[href*='.pptx'], a[href*='.csv'], div[data-testid*='attachment'], div[data-testid*='artifact']"
+      },
+      "chatgpt": {
+        "image": "img[alt*='Generated by DALL·E'], img[alt*='Uploaded image'], div[data-message-author-role='assistant'] img:not([alt*='avatar']):not([class*='avatar'])",
+        "code": "pre code, div.bg-black pre",
+        "fileChip": "a[href*='.pdf'], a[href*='.docx'], a[href*='.xlsx'], a[href*='.pptx'], a[href*='.csv'], a[download]"
+      },
+      "gemini": {
+        "image": "image-card img, img.generated-image, model-response img:not([alt*='avatar'])",
+        "code": "code-block, pre code",
+        "fileChip": "a[href*='.pdf'], a[href*='.docx'], a[href*='.xlsx'], a[href*='.pptx'], a[href*='.csv'], a[download]"
+      }
+    }
+  },
+  "windowGap": 12,
+  "widthPercent": 50,
+  "height": 96,
+  "server": {
+    "port": 34567,
+    "allowedExtensionId": ""
+  },
+  "doNotDisturb": false,
+  "idleDots": {
+    "size": 4,
+    "gap": 4,
+    "noneColor": "rgba(255, 255, 255, 0.85)",
+    "colors": {
+      "needs_input": "#ff7a00",
+      "stopped": "#f44336",
+      "running": "#2196f3",
+      "finished": "#4caf50"
+    },
+    "pulseCycleMs": 2000,
+    "transitionMs": 300
+  },
+  "pill": {
+    "height": 40,
+    "targetWidth": "max-content",
+    "minWidth": 260,
+    "maxWidthPercent": 88,
+    "paddingX": 22,
+    "backgroundColor": "#0b0b0d",
+    "backgroundOpacity": 0.95,
+    "borderWidth": 1.5,
+    "textColor": "#ffffff",
+    "textSize": 13,
+    "iconSize": 18,
+    "dotIntroDurationMs": 300,
+    "dotPauseMs": 150,
+    "expandDurationMs": 1000,
+    "textFadeOutMs": 250,
+    "shrinkDurationMs": 900,
+    "queuePauseMs": 200,
+    "easing": "cubic-bezier(0.45, 0, 0.15, 1)"
+  },
+  "sites": {
+    "claude": { "label": "Claude", "icon": "C", "color": "#ff7a00", "logo": "logos/claude.svg", "tint": "original" },
+    "chatgpt": { "label": "ChatGPT", "icon": "G", "color": "#ff4081", "logo": "logos/chatgpt.svg", "tint": "white" },
+    "gemini": { "label": "Gemini", "icon": "G", "color": "#9c27b0", "logo": "logos/gemini.svg", "tint": "original" },
+    "antigravity": { "label": "Antigravity", "icon": "A", "color": "#00bcd4", "logo": "logos/antigravity.svg", "tint": "original" }
+  },
+  "siteIcons": {
+    "claude": "#ff7a00",
+    "chatgpt": "#ff4081",
+    "gemini": "#9c27b0",
+    "antigravity": "#00bcd4"
+  },
+  "desktopDetectors": {
+    "enabled": true,
+    "idleIntervalSec": 10,
+    "activeIntervalSec": 1,
+    "debounceMs": 1000,
+    "debug": false,
+    "claude": {
+      "enabled": true,
+      "processName": "claude",
+      "windowTitle": "Claude",
+      "generatingButton": "Stop",
+      "finishedStatus": "finished the response"
+    },
+    "chatgpt": {
+      "enabled": true,
+      "processName": "ChatGPT",
+      "windowTitle": "ChatGPT",
+      "generatingButton": "Stop",
+      "finishedButton": "Send"
+    }
+  },
+  "outerGlow": {
+    "tints": {
+      "finished": "rgba(76, 175, 80, 0.55)",
+      "stopped": "rgba(244, 67, 54, 0.55)",
+      "limit_reached": "rgba(244, 67, 54, 0.55)",
+      "needs_input": "rgba(255, 122, 0, 0.65)",
+      "default": "rgba(255, 255, 255, 0.25)"
+    }
+  },
+  "notifications": {
+    "pulseCycleMs": 2000,
+    "types": {
+      "working": {
+        "color": "#2196f3",
+        "hasPopup": false,
+        "holdDurationMs": 0,
+        "sound": "none",
+        "marksUnread": false,
+        "pulse": false
+      },
+      "finished": {
+        "color": "#4caf50",
+        "hasPopup": true,
+        "holdDurationMs": 2000,
+        "sound": "tick",
+        "marksUnread": true,
+        "pulse": false
+      },
+      "stopped": {
+        "color": "#f44336",
+        "hasPopup": true,
+        "holdDurationMs": 4000,
+        "sound": "tick",
+        "marksUnread": true,
+        "pulse": false
+      },
+      "needs_input": {
+        "color": "#ff7a00",
+        "hasPopup": true,
+        "holdDurationMs": 8000,
+        "sound": "twoTone",
+        "marksUnread": true,
+        "pulse": true,
+        "dotKeepsPulsing": true
+      },
+      "limit_reached": {
+        "color": "#f44336",
+        "hasPopup": true,
+        "holdDurationMs": 8000,
+        "sound": "tick",
+        "marksUnread": true,
+        "pulse": true,
+        "dotKeepsPulsing": false
+      }
+    }
+  },
+  "fullscreen": {
+    "popups": false,
+    "sound": false,
+    "clickable": false,
+    "needsInputBreaksThrough": false,
+    "notificationVisibleSeconds": 10,
+    "hiddenSeconds": 45,
+    "periodicVisibleSeconds": 10,
+    "visibleSeconds": 10,
+    "pulseCycleSec": 2.5,
+    "fadeDurationMs": 400,
+    "checkIntervalSec": 3
+  },
+  "history": {
+    "maxItems": 50,
+    "panelWidth": 380,
+    "panelHeight": 280,
+    "panelBackgroundOpacity": 0.85,
+    "panelTransitionMs": 300,
+    "autoCloseDelaySec": 3,
+    "shortcut": "Ctrl+Shift+N"
+  },
+  "sound": {
+    "enabled": true,
+    "volume": 0.25,
+    "tick": {
+      "frequency": 880,
+      "durationMs": 60,
+      "waveType": "sine"
+    },
+    "twoTone": {
+      "note1": 587.33,
+      "note2": 880,
+      "noteDurationMs": 150,
+      "waveType": "sine"
+    }
+  },
+  "transitionDurationMs": 250,
+  "devTestPanel": true
+}

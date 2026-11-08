@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Island Bridge</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="title-row">
+        <span class="app-title">AI Island Bridge</span>
+        <span id="status-badge" class="badge badge-gray">No token</span>
+      </div>
+      <p class="subtitle">Bridges AI sites with the desktop island</p>
+    </div>
+
+    <div class="section">
+      <label for="token-input" class="label">Secret Token</label>
+      <div class="input-row">
+        <input
+          type="password"
+          id="token-input"
+          placeholder="Paste secret token..."
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button id="btn-toggle-visibility" type="button" title="Toggle visibility">👁</button>
+      </div>
+      <button id="btn-save" class="btn btn-primary">Save Token</button>
+      <div id="save-feedback" class="feedback"></div>
+    </div>
+
+    <div class="section divider">
+      <button id="btn-test" class="btn btn-secondary" disabled>
+        Send test event (Claude)
+      </button>
+      <div id="test-feedback" class="feedback"></div>
+    </div>
+  </div>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>
+

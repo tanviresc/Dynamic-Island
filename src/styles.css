@@ -1,0 +1,676 @@
+:root {
+  /* Dynamic Island Scale (Part B) */
+  --island-scale: 0.8;
+
+  /* Idle Dots config (Part A) - NOT scaled per spec */
+  --dot-size: 0.5px;
+  --dot-gap: 2px;
+  --dot-glow-blur: 1px;
+  --dot-glow-spread: 1px;
+  --dot-glow-opacity: 0.6;
+  --dots-hit-height: 24px;
+  --dots-hit-pad-x: 10px;
+  --dot-none-color: rgba(255, 255, 255, 0.85);
+  --dot-color-needs-input: #ff7a00;
+  --dot-color-stopped: #f44336;
+  --dot-color-running: #2196f3;
+  --dot-color-finished: #4caf50;
+  --dot-transition-ms: 300ms;
+  --pulse-cycle: 2000ms;
+  --fullscreen-pulse-cycle: 2500ms;
+  --fullscreen-fade-ms: 400ms;
+
+  /* Base unscaled metrics */
+  --base-pill-height: 40px;
+  --base-pill-min-width: 260px;
+  --base-pill-padding-x: 22px;
+  --base-pill-border-width: 1.75px;
+  --base-pill-text-size: 13px;
+  --base-pill-icon-size: 18px;
+  --base-pill-gap: 10px;
+
+  /* Scaled Pill Metrics */
+  --pill-height: calc(var(--base-pill-height) * var(--island-scale));
+  --pill-target-width: max-content;
+  --pill-min-width: calc(var(--base-pill-min-width) * var(--island-scale));
+  --pill-max-width: 88%;
+  --pill-padding-x: calc(var(--base-pill-padding-x) * var(--island-scale));
+  --pill-bg: #000000;
+  --pill-bg-opacity: 1;
+  --pill-border-width: max(1.5px, calc(var(--base-pill-border-width) * var(--island-scale)));
+  --pill-border-radius: calc(var(--pill-height) / 2);
+  --pill-text-color: #ffffff;
+  --pill-text-size: calc(var(--base-pill-text-size) * var(--island-scale));
+  --pill-icon-size: calc(var(--base-pill-icon-size) * var(--island-scale));
+  --pill-gap: calc(var(--base-pill-gap) * var(--island-scale));
+
+  /* Refined, noticeable outer glow dimensions */
+  --glow-tight-blur: calc(8px * var(--island-scale));
+  --glow-tight-spread: calc(1px * var(--island-scale));
+  --glow-wide-blur: calc(16px * var(--island-scale));
+  --glow-wide-spread: calc(2px * var(--island-scale));
+
+  /* Accent & Glow tints */
+  --type-accent-color: #4caf50;
+  --type-border-top: rgba(255, 255, 255, 0.95);
+  --type-glow-tighter: rgba(76, 175, 80, 0.85);
+  --type-glow-wider: rgba(76, 175, 80, 0.45);
+
+  /* Animation Timings & Curves (Part C) */
+  --pill-expand-duration: 1000ms;
+  --pill-shrink-duration: 900ms;
+  --text-fade-duration: 250ms;
+  --pill-easing: cubic-bezier(0.45, 0, 0.15, 1);
+
+  /* Offset for expand / shrink from dot */
+  --pill-offset-x: 0px;
+  --pill-offset-y: 0px;
+
+  /* History panel config */
+  --panel-bg: rgba(18, 18, 22, 0.85);
+  --panel-transition-duration: 300ms;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  background: transparent !important;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+#island-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 18px;
+  background: transparent;
+}
+
+/* =========================================================================
+   PART A: Idle Dots Row
+   ========================================================================= */
+#dots-container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--dot-gap);
+  padding: 0 var(--dots-hit-pad-x);
+  min-height: var(--dots-hit-height);
+  box-sizing: border-box;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  cursor: pointer;
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 400ms ease-in-out, transform 350ms ease-in-out;
+  overflow: visible;
+}
+
+/* Hidden while the pill is open */
+#dots-container.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 300ms ease;
+}
+
+/* Hidden while active in a monitored AI app context */
+#dots-container.context-suppressed {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  animation: none !important;
+  transition: opacity 300ms ease;
+}
+
+/* Fullscreen mode click-through & cycle states */
+#dots-container.fullscreen-mode {
+  pointer-events: none !important;
+  cursor: default !important;
+}
+
+#dots-container.fullscreen-cycle-hidden {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  animation: none !important;
+  transition: opacity var(--fullscreen-fade-ms) ease-in-out;
+}
+
+#dots-container.fullscreen-visible {
+  opacity: 1 !important;
+  pointer-events: none !important;
+  transition: opacity var(--fullscreen-fade-ms) ease-in-out;
+  animation: fullscreen-dot-row-pulse var(--fullscreen-pulse-cycle) infinite ease-in-out;
+}
+
+@keyframes fullscreen-dot-row-pulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.88;
+  }
+
+  50% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+}
+
+/* Calmer orange pulse for needs_input during fullscreen visible phase */
+#dots-container.fullscreen-visible .state-dot.needs_input {
+  animation: fullscreen-calm-orange-pulse var(--fullscreen-pulse-cycle) infinite ease-in-out;
+}
+
+@keyframes fullscreen-calm-orange-pulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.4), 0 0 var(--dot-glow-blur) var(--dot-glow-spread) rgba(255, 122, 0, var(--dot-glow-opacity));
+  }
+
+  50% {
+    transform: scale(1.2);
+    box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.4), 0 0 calc(var(--dot-glow-blur) * 1.25) calc(var(--dot-glow-spread) * 1.25) rgba(255, 122, 0, 0.8);
+  }
+}
+
+/* Individual state dot */
+.state-dot {
+  width: var(--dot-size);
+  height: var(--dot-size);
+  border-radius: 50%;
+  flex-shrink: 0;
+  overflow: visible;
+  transition: transform var(--dot-transition-ms) cubic-bezier(0.4, 0, 0.2, 1),
+    opacity var(--dot-transition-ms) ease,
+    margin var(--dot-transition-ms) ease;
+}
+
+/* Entering animation for newly added dot */
+@keyframes dot-enter {
+  0% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.state-dot.entering {
+  animation: dot-enter var(--dot-transition-ms) cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* None state: single soft white dot (~85% opacity) with static soft white outer glow */
+.state-dot.none {
+  background: var(--dot-none-color);
+  box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.4), 0 0 var(--dot-glow-blur) var(--dot-glow-spread) rgba(255, 255, 255, var(--dot-glow-opacity));
+}
+
+/* Running state: blue dot with static blue outer glow */
+.state-dot.running {
+  background: var(--dot-color-running);
+  box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.4), 0 0 var(--dot-glow-blur) var(--dot-glow-spread) rgba(33, 150, 243, var(--dot-glow-opacity));
+}
+
+/* Finished state: green dot with static green outer glow */
+.state-dot.finished {
+  background: var(--dot-color-finished);
+  box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.4), 0 0 var(--dot-glow-blur) var(--dot-glow-spread) rgba(76, 175, 80, var(--dot-glow-opacity));
+}
+
+/* Stopped / limit state: red dot with static red outer glow */
+.state-dot.stopped {
+  background: var(--dot-color-stopped);
+  box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.4), 0 0 var(--dot-glow-blur) var(--dot-glow-spread) rgba(244, 67, 54, var(--dot-glow-opacity));
+}
+
+/* Needs input state: orange dot with static orange outer glow & soft pulse */
+.state-dot.needs_input {
+  background: var(--dot-color-needs-input);
+  box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.4), 0 0 var(--dot-glow-blur) var(--dot-glow-spread) rgba(255, 122, 0, var(--dot-glow-opacity));
+  animation: orange-pulse var(--pulse-cycle) infinite ease-in-out;
+}
+
+@keyframes orange-pulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.4), 0 0 var(--dot-glow-blur) var(--dot-glow-spread) rgba(255, 122, 0, var(--dot-glow-opacity));
+  }
+
+  50% {
+    transform: scale(1.3);
+    box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.4), 0 0 calc(var(--dot-glow-blur) * 1.5) calc(var(--dot-glow-spread) * 1.5) rgba(255, 122, 0, 0.85);
+  }
+}
+
+/* =========================================================================
+   PART B & C: Pill Look & Animation (Seam-free Border, Unclipped Glow & Scaled Metrics)
+   ========================================================================= */
+#pill {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  transform: translate(calc(-50% + var(--pill-offset-x)), var(--pill-offset-y)) scale(0.1);
+  transform-origin: center center;
+  width: var(--pill-target-width);
+  min-width: var(--pill-min-width);
+  max-width: var(--pill-max-width);
+  height: var(--pill-height);
+  border-radius: var(--pill-border-radius);
+
+  /* Seam-free metallic border outer layer with pure black base */
+  border: var(--pill-border-width) solid transparent;
+  background:
+    linear-gradient(#000000, #000000) padding-box,
+    linear-gradient(180deg, var(--type-border-top), var(--type-accent-color)) border-box;
+  background-clip: padding-box, border-box;
+  background-origin: padding-box, border-box;
+
+  /* Noticeable but refined outer glow (never clipped) */
+  box-shadow:
+    0 0 var(--glow-tight-blur) var(--glow-tight-spread) var(--type-glow-tighter),
+    0 0 var(--glow-wide-blur) var(--glow-wide-spread) var(--type-glow-wider);
+
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  opacity: 0;
+  overflow: visible;
+  /* Never clip the glow */
+  pointer-events: none;
+}
+
+/* Open state: fully expanded and centered */
+#pill.open {
+  opacity: 1;
+  transform: translate(-50%, 0) scale(1);
+  pointer-events: auto;
+  cursor: pointer;
+  transition: transform var(--pill-expand-duration) var(--pill-easing),
+    opacity 200ms ease;
+}
+
+/* Shrinking state: smoothly shrinks back to dot coordinates */
+#pill.shrinking {
+  opacity: 0;
+  transform: translate(calc(-50% + var(--pill-offset-x)), var(--pill-offset-y)) scale(0.1);
+  pointer-events: none;
+  transition: transform var(--pill-shrink-duration) var(--pill-easing),
+    opacity 250ms ease calc(var(--pill-shrink-duration) - 250ms);
+}
+
+/* Outer glow pulsing (for needs_input) */
+@keyframes pill-pulse-glow {
+
+  0%,
+  100% {
+    box-shadow:
+      0 0 var(--glow-tight-blur) var(--glow-tight-spread) var(--type-glow-tighter),
+      0 0 var(--glow-wide-blur) var(--glow-wide-spread) var(--type-glow-wider);
+  }
+
+  50% {
+    box-shadow:
+      0 0 calc(var(--glow-tight-blur) * 1.5) calc(var(--glow-tight-spread) * 1.5) var(--type-glow-tighter),
+      0 0 calc(var(--glow-wide-blur) * 1.5) calc(var(--glow-wide-spread) * 1.5) var(--type-glow-wider);
+  }
+}
+
+#pill.open.pulsing {
+  animation: pill-pulse-glow var(--pulse-cycle) infinite ease-in-out;
+}
+
+/* Pill inner content container: holds pure black background, inner highlight, padding & text clipping */
+#pill-content {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--pill-gap);
+  width: 100%;
+  height: 100%;
+  background: #000000;
+  border-radius: calc(var(--pill-border-radius) - var(--pill-border-width));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+  padding: 0 var(--pill-padding-x);
+  max-width: 100%;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+#pill-content>* {
+  opacity: 0;
+  transition: opacity var(--text-fade-duration) ease;
+}
+
+/* Text and logo visible right away while the island is expanding */
+#pill.open #pill-content>* {
+  opacity: 1;
+  transition: opacity 180ms ease;
+}
+
+#pill.content-faded #pill-content>* {
+  opacity: 0 !important;
+  transition: opacity var(--text-fade-duration) ease !important;
+}
+
+/* Real site logo rendering (Part C) */
+#pill-icon {
+  width: var(--pill-icon-size);
+  height: var(--pill-icon-size);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  background: transparent !important;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.pill-logo-img {
+  width: var(--pill-icon-size);
+  height: var(--pill-icon-size);
+  object-fit: contain;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pill-logo-img svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.pill-logo-img.tint-white,
+.pill-logo-img.tint-white svg {
+  filter: brightness(0) invert(1);
+}
+
+/* Fallback letter circle if logo SVG is missing or fails to load */
+.pill-logo-fallback {
+  width: var(--pill-icon-size);
+  height: var(--pill-icon-size);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(var(--pill-icon-size) * 0.6);
+  font-weight: 700;
+  color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  flex-shrink: 0;
+}
+
+#pill-type-icon {
+  display: none;
+  width: calc(14px * var(--island-scale));
+  height: calc(14px * var(--island-scale));
+  flex-shrink: 0;
+  color: var(--type-accent-color);
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6));
+}
+
+#pill.show-type-icon #pill-type-icon {
+  display: block;
+}
+
+#pill-text {
+  flex: 0 1 auto;
+  min-width: 0;
+  font-size: var(--pill-text-size);
+  color: var(--pill-text-color);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+}
+
+/* =========================================================================
+   History Panel (Task 7): Apple-style glass look
+   ========================================================================= */
+#history-panel {
+  position: absolute;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%) translateY(0) scale(1);
+  width: 380px;
+  max-width: 94%;
+  max-height: 280px;
+  background: var(--panel-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.65), 0 0 1px rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity var(--panel-transition-duration) cubic-bezier(0.16, 1, 0.3, 1),
+    transform var(--panel-transition-duration) cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#history-panel.hidden {
+  opacity: 0;
+  transform: translateX(-50%) translateY(-12px) scale(0.95);
+  pointer-events: none;
+}
+
+.history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.history-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #e4e4e7;
+  letter-spacing: 0.3px;
+}
+
+.history-actions {
+  display: flex;
+  gap: 8px;
+}
+
+#history-clear {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #a1a1aa;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+#history-clear:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+#history-content {
+  overflow-y: auto;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.history-empty {
+  font-size: 12px;
+  color: #71717a;
+  text-align: center;
+  padding: 24px 0;
+}
+
+.history-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.history-group-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #a1a1aa;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding-bottom: 2px;
+}
+
+.history-badge {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.history-site-logo {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.history-site-logo svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.history-site-logo.tint-white,
+.history-site-logo.tint-white svg {
+  filter: brightness(0) invert(1);
+}
+
+.history-site-badge-fallback {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.source-tag {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 1px 5px;
+  border-radius: 3px;
+  letter-spacing: 0.4px;
+  flex-shrink: 0;
+}
+
+.source-tag.desktop {
+  background: rgba(59, 130, 246, 0.2);
+  color: #93c5fd;
+  border: 1px solid rgba(59, 130, 246, 0.35);
+}
+
+.source-tag.ide {
+  background: rgba(0, 188, 212, 0.2);
+  color: #67e8f9;
+  border: 1px solid rgba(0, 188, 212, 0.35);
+}
+
+.source-tag.web {
+  background: rgba(255, 255, 255, 0.06);
+  color: #a1a1aa;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.kind-tag {
+  font-size: 9px;
+  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: rgba(168, 85, 247, 0.15);
+  color: #d8b4fe;
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  text-transform: capitalize;
+  letter-spacing: 0.3px;
+  flex-shrink: 0;
+}
+
+.task-tag {
+  font-size: 9px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: rgba(0, 188, 212, 0.12);
+  color: #67e8f9;
+  border: 1px solid rgba(0, 188, 212, 0.3);
+  flex-shrink: 0;
+  max-width: 110px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 6px;
+  font-size: 12px;
+  color: #e4e4e7;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease;
+}
+
+.history-item:hover {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.history-item-msg {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.history-item-time {
+  font-size: 10px;
+  color: #71717a;
+  flex-shrink: 0;
+}

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Island</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="island-container">
+    <!-- Dynamic idle dots row (Part A) -->
+    <div id="dots-container" title="Click to view history" role="button" tabindex="0">
+      <!-- Dots rendered dynamically based on active site states -->
+    </div>
+
+    <!-- Dynamic popup pill -->
+    <div id="pill">
+      <div id="pill-content">
+        <div id="pill-icon"></div>
+        <svg id="pill-type-icon" viewBox="0 0 16 16" width="14" height="14" fill="currentColor">
+          <path d="M8 1a7 7 0 1 0 7 7A7 7 0 0 0 8 1zm0 10.5a.9.9 0 1 1 .9-.9.9.9 0 0 1-.9.9zm.8-3.4a.8.8 0 0 1-1.6 0V4.5a.8.8 0 0 1 1.6 0z"/>
+        </svg>
+        <span id="pill-text"></span>
+      </div>
+    </div>
+
+    <!-- History Panel (Task 7) -->
+    <div id="history-panel" class="hidden">
+      <div class="history-header">
+        <span class="history-title">Notification History</span>
+        <div class="history-actions">
+          <button id="history-clear" title="Clear all history">Clear</button>
+        </div>
+      </div>
+      <div id="history-content">
+        <!-- Dynamically rendered items grouped by AI -->
+      </div>
+    </div>
+  </div>
+  <script src="sound.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>

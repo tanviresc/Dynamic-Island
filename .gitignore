@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+
+# Tauri & Rust build artifacts
+target/
+src-tauri/target/
+
+# Secret tokens and credentials
+token.secret
+token*
+*.secret
+.env
+.env.*
+
+# Logs and runtime files
+*.log
+history.json
+app_log.txt
+test_out.txt
+test_err.txt
+
+# Binary executables
+*.exe
+*.msi
+*.dll
+
+# Scratch and internal temporary files
+scratch/
+.system_generated/
+
+# Raw downloaded brand logos
+Logos/
+src/logos/Logos/
+
+# OS generated files
+Thumbs.db
+.DS_Store

@@ -1,0 +1,11 @@
+{
+  "name": "ai-island-tools",
+  "version": "1.0.0",
+  "description": "Dev testing utilities for AI Island WebSocket server",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}
+

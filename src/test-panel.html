@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Island Test Panel</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    body {
+      background: #18181b;
+      color: #e4e4e7;
+      padding: 16px;
+      user-select: none;
+    }
+    h3 {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #a1a1aa;
+      margin-bottom: 8px;
+    }
+    .section {
+      margin-bottom: 14px;
+    }
+    .btn-group {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    button {
+      flex: 1;
+      min-width: 95px;
+      padding: 8px 10px;
+      font-size: 12px;
+      font-weight: 500;
+      border: 1px solid #3f3f46;
+      background: #27272a;
+      color: #d4d4d8;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 150ms ease;
+    }
+    button:hover {
+      background: #3f3f46;
+    }
+    button:active {
+      transform: scale(0.98);
+    }
+    /* Site selector buttons */
+    button.site-btn.active-claude {
+      background: #ff7a00;
+      color: #000;
+      border-color: #ff7a00;
+      font-weight: 600;
+    }
+    button.site-btn.active-chatgpt {
+      background: #ff4081;
+      color: #fff;
+      border-color: #ff4081;
+      font-weight: 600;
+    }
+    button.site-btn.active-gemini {
+      background: #9c27b0;
+      color: #fff;
+      border-color: #9c27b0;
+      font-weight: 600;
+    }
+    button.site-btn.active-antigravity {
+      background: #00bcd4;
+      color: #000;
+      border-color: #00bcd4;
+      font-weight: 600;
+    }
+    button.source-btn.active-source {
+      background: #3b82f6;
+      color: #fff;
+      border-color: #3b82f6;
+      font-weight: 600;
+    }
+
+    /* Type buttons */
+    .btn-working { border-color: #2196f3; }
+    .btn-working:hover { background: rgba(33, 150, 243, 0.2); }
+
+    .btn-finished { border-color: #4caf50; }
+    .btn-finished:hover { background: rgba(76, 175, 80, 0.2); }
+
+    .btn-stopped { border-color: #f44336; }
+    .btn-stopped:hover { background: rgba(244, 67, 54, 0.2); }
+
+    .btn-needs-input { border-color: #ff7a00; color: #ffb74d; }
+    .btn-needs-input:hover { background: rgba(255, 122, 0, 0.25); }
+
+    .btn-limit-reached { border-color: #f44336; color: #ef9a9a; }
+    .btn-limit-reached:hover { background: rgba(244, 67, 54, 0.25); }
+
+    .btn-resolve { border-color: #757575; color: #b0bec5; }
+    .btn-resolve:hover { background: rgba(117, 117, 117, 0.2); }
+
+    .btn-special {
+      background: #312e81;
+      border-color: #4f46e5;
+      color: #e0e7ff;
+    }
+    .btn-special:hover {
+      background: #3730a3;
+    }
+
+    .btn-fs-active {
+      background: #065f46 !important;
+      border-color: #10b981 !important;
+      color: #ecfdf5 !important;
+    }
+
+    .btn-full {
+      width: 100%;
+      flex: 100%;
+      border-color: #52525b;
+    }
+
+    /* Checkbox */
+    .mute-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      color: #d4d4d8;
+    }
+    .mute-toggle input {
+      cursor: pointer;
+      width: 16px;
+      height: 16px;
+      accent-color: #2196f3;
+    }
+  </style>
+</head>
+<body>
+  <div class="section">
+    <h3>Active AI Site</h3>
+    <div class="btn-group">
+      <button id="site-claude" class="site-btn active-claude">Claude</button>
+      <button id="site-chatgpt" class="site-btn">ChatGPT</button>
+      <button id="site-gemini" class="site-btn">Gemini</button>
+      <button id="site-antigravity" class="site-btn">Antigravity</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Source</h3>
+    <div class="btn-group">
+      <button id="src-web" class="source-btn active-source">Web</button>
+      <button id="src-desktop" class="source-btn">Desktop</button>
+      <button id="src-ide" class="source-btn">IDE</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Task ID (Multi-Task State)</h3>
+    <div style="display: flex; gap: 6px; align-items: center;">
+      <input type="text" id="task-id-input" placeholder="e.g. task-1, task-2 (leave blank for default)" style="flex: 1; background: #27272a; border: 1px solid #3f3f46; color: #e4e4e7; padding: 6px 10px; border-radius: 6px; font-size: 12px;" />
+      <button id="btn-set-task-1" style="min-width: 60px; padding: 6px 8px;">Task 1</button>
+      <button id="btn-set-task-2" style="min-width: 60px; padding: 6px 8px;">Task 2</button>
+      <button id="btn-clear-task" style="min-width: 50px; padding: 6px 8px;">Clear</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Task Kind (Classification & Templates)</h3>
+    <div style="display: flex; gap: 8px; align-items: center;">
+      <select id="task-kind-select" style="flex: 1; background: #27272a; border: 1px solid #3f3f46; color: #e4e4e7; padding: 7px 10px; border-radius: 6px; font-size: 12px; cursor: pointer;">
+        <option value="image">image (Picture is ready / Picture generation stopped)</option>
+        <option value="pdf">pdf (PDF is ready / PDF generation stopped)</option>
+        <option value="document">document (Document is ready / Document generation stopped)</option>
+        <option value="spreadsheet">spreadsheet (Spreadsheet is ready / Spreadsheet generation stopped)</option>
+        <option value="slides">slides (Presentation is ready / Presentation generation stopped)</option>
+        <option value="code">code (Code is ready / Code generation stopped)</option>
+        <option value="research">research (Research is ready / Research stopped)</option>
+        <option value="translation">translation (Translation is ready / Translation stopped)</option>
+        <option value="summary">summary (Summary is ready / Summary stopped)</option>
+        <option value="rewrite">rewrite (Rewrite is ready / Rewrite stopped)</option>
+        <option value="question" selected>question (Answer is ready: see the answer to your question / Answer was stopped)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Notification Actions</h3>
+    <div class="btn-group">
+      <button id="notif-working" class="btn-working">Working</button>
+      <button id="notif-finished" class="btn-finished">Finished (2s)</button>
+      <button id="notif-stopped" class="btn-stopped">Stopped (4s)</button>
+      <button id="notif-needs-input" class="btn-needs-input">Needs Input (8s)</button>
+      <button id="notif-limit-reached" class="btn-limit-reached">Limit Reached (8s)</button>
+      <button id="notif-resolve" class="btn-resolve">Resolve Needs Input</button>
+      <button id="notif-clear-all" class="btn-resolve" style="border-color: #ef5350; color: #ef9a9a;">Clear All</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Task Kind Template Tests</h3>
+    <div class="btn-group">
+      <button id="test-pic-done" style="border-color: #4caf50; color: #a5d6a7;">Picture is ready</button>
+      <button id="test-pic-stopped" style="border-color: #f44336; color: #ef9a9a;">Picture gen stopped</button>
+      <button id="test-pdf-done" style="border-color: #4caf50; color: #a5d6a7;">PDF is ready</button>
+      <button id="test-pdf-stopped" style="border-color: #f44336; color: #ef9a9a;">PDF gen stopped</button>
+      <button id="test-code-done" style="border-color: #4caf50; color: #a5d6a7;">Code is ready</button>
+      <button id="test-research-done" style="border-color: #4caf50; color: #a5d6a7;">Research is ready</button>
+      <button id="test-trans-done" style="border-color: #4caf50; color: #a5d6a7;">Translation is ready</button>
+      <button id="test-summary-done" style="border-color: #4caf50; color: #a5d6a7;">Summary is ready</button>
+      <button id="test-question-done" style="border-color: #4caf50; color: #a5d6a7;">Answer is ready</button>
+      <button id="test-question-stopped" style="border-color: #f44336; color: #ef9a9a;">Answer was stopped</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Antigravity Multi-Task Verification</h3>
+    <div class="btn-group">
+      <button id="ag-t1-working" style="border-color: #00bcd4; color: #67e8f9;">T1 Working (Refactor auth)</button>
+      <button id="ag-t1-needs-input" style="border-color: #ff7a00; color: #ffb74d;">T1 Needs You (Approve test)</button>
+      <button id="ag-t2-working" style="border-color: #00bcd4; color: #67e8f9;">T2 Working (Fix css)</button>
+      <button id="ag-t2-done" style="border-color: #4caf50; color: #a5d6a7;">T2 Finished (Fix css)</button>
+      <button id="ag-t2-stopped" style="border-color: #f44336; color: #ef9a9a;">T2 Stopped (Cancelled)</button>
+      <button id="ag-t1-resolve" style="border-color: #757575; color: #b0bec5;">Resolve T1 Input</button>
+    </div>
+    <div style="margin-top: 6px;">
+      <button id="btn-replay-trace" class="btn-special btn-full" style="border-color: #00bcd4; color: #67e8f9;">Replay Trace (Scenario A)</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Tasks 5, 6, 7 Verification Tests</h3>
+    <div class="btn-group">
+      <button id="btn-queue-test" class="btn-special btn-full">Queue Test (Fires 3 Events Sequentially)</button>
+      <button id="btn-fs-toggle" class="btn-special">Simulate Fullscreen: OFF</button>
+      <button id="btn-history-toggle" class="btn-special">Toggle History Panel</button>
+    </div>
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 6px; padding: 4px 8px; background: #27272a; border-radius: 4px; border: 1px solid #3f3f46;">
+      <span style="font-size: 11px; color: #a1a1aa;">Cycle & Context State:</span>
+      <span id="fs-cycle-state" style="font-size: 11px; font-weight: 600; color: #71717a;">Not armed [Context: none]</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Simulate Context (Hide Island on AI App)</h3>
+    <div style="display: flex; gap: 8px; align-items: center;">
+      <select id="context-simulate-select" style="flex: 1; background: #27272a; border: 1px solid #3f3f46; color: #e4e4e7; padding: 7px 10px; border-radius: 6px; font-size: 12px; cursor: pointer;">
+        <option value="none" selected>None (Desktop / other app)</option>
+        <option value="antigravity">Antigravity</option>
+        <option value="claude_desktop">Claude desktop</option>
+        <option value="chatgpt_desktop">ChatGPT desktop</option>
+        <option value="claude_web">Claude web</option>
+        <option value="chatgpt_web">ChatGPT web</option>
+        <option value="gemini_web">Gemini web</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Mode & Sound Controls</h3>
+    <div style="display: flex; gap: 18px; align-items: center;">
+      <label class="mute-toggle">
+        <input type="checkbox" id="dnd-checkbox" />
+        <span>Do Not Disturb (DND)</span>
+      </label>
+      <label class="mute-toggle">
+        <input type="checkbox" id="mute-checkbox" />
+        <span>Mute Sound</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Local WebSocket Server (Task 8)</h3>
+    <div style="background: #27272a; padding: 10px; border-radius: 6px; border: 1px solid #3f3f46; font-size: 12px; display: flex; flex-direction: column; gap: 6px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span>Server Status:</span>
+        <span id="ws-server-status" style="font-weight: 600; color: #a1a1aa;">Checking...</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span>Client:</span>
+        <span id="ws-client-status" style="color: #a1a1aa;">None</span>
+      </div>
+      <div style="display: flex; gap: 6px; align-items: center; margin-top: 4px;">
+        <input type="password" id="ws-token-input" readonly style="flex: 1; background: #18181b; border: 1px solid #3f3f46; color: #a1a1aa; padding: 5px 8px; border-radius: 4px; font-family: monospace; font-size: 11px;" value="loading..." />
+        <button id="btn-copy-token" style="flex: 0 0 auto; min-width: 85px; padding: 5px 10px;">Copy Token</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="test-panel.js"></script>
+</body>
+</html>
